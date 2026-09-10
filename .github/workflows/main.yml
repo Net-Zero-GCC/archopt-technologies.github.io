@@ -1,14 +1,15 @@
 name: Copy Assets from Old Repo
+
 on:
   workflow_dispatch:
 
-# This grants the script permission to write/push files to your repository
 permissions:
   contents: write
 
 jobs:
   copy-files:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout New Repo
         uses: actions/checkout@v4
@@ -17,29 +18,29 @@ jobs:
 
       - name: Clone Old Repo and Copy Folders Exactly
         run: |
-          # Clone the source repository into a temporary folder
-          git clone https://github.com old-repo
-          
-          # Copy folders and files exactly as they are named
-          cp -r "old-repo/ARCHOPT tool pictures" ./
-          cp -r "old-repo/EPCalibration" ./
-          cp "old-repo/Pictures - ARCHOPT Cover.png" ./
-          cp "old-repo/Pictures -EPCalibration cover.png" ./
-          cp "old-repo/ARCHOPT Technologies.png" ./
-          
-          # Clean up the temporary folder
-          rm -rf old-repo
+          # Clone the old repo into a folder named "old"
+          git clone https://github.com/Net-Zero-GCC/optimization.github.io old
+
+          # Copy folders and files exactly as named
+          cp -r "old/ARCHOPT tool pictures" ./
+          cp -r "old/EPCalibration" ./
+          cp "old/Pictures - ARCHOPT Cover.png" ./
+          cp "old/Pictures - EPCalibration cover.png" ./
+          cp "old/ARCHOPT Technologies.png" ./
+
+          # Clean up
+          rm -rf old
 
       - name: Commit and Push to New Repo
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@://github.com"
+          git config --global user.email "github-actions[bot]@github.com"
+
           git add .
-          
-          # Check if there are changes before committing to avoid empty commit errors
+
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Copy ARCHOPT and EPCalibration assets directly from old repo"
+            git commit -m "Copy ARCHOPT and EPCalibration assets from old repo"
             git push origin main
           fi
