@@ -1,0 +1,33 @@
+name: Copy Assets from Old Repo
+on:
+  workflow_dispatch: # Allows you to run this manually with one click
+
+jobs:
+  copy-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout New Repo
+        uses: actions/checkout@v4
+
+      - name: Clone Old Repo and Copy Folders Exactly
+        run: |
+          # Clone the source repository into a temporary folder
+          git clone https://github.com old-repo
+          
+          # Copy folders and files exactly as they are named
+          cp -r "old-repo/ARCHOPT tool pictures" ./
+          cp -r "old-repo/EPCalibration" ./
+          cp "old-repo/Pictures - ARCHOPT Cover.png" ./
+          cp "old-repo/Pictures -EPCalibration cover.png" ./
+          cp "old-repo/ARCHOPT Technologies.png" ./
+          
+          # Clean up the temporary folder
+          rm -rf old-repo
+
+      - name: Commit and Push to New Repo
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          git add .
+          git commit -m "Copy ARCHOPT and EPCalibration assets directly from old repo"
+          git push
